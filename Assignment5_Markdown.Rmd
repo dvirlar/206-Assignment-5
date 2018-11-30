@@ -1,0 +1,65 @@
+---
+title: "The Last SLOme Stretch"
+author: "Daphne Virlar"
+date: "11/27/2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r}
+#load data and clean it up
+library(tidyverse) #for all things tidy
+grad <- read_csv("grad_enrollment.csv")
+
+grad <- grad %>% 
+  select(Year, Total_Enrollment, Total_Males, Total_Females, Public_Enrollment, Private_Enrollment)
+```
+
+
+
+
+Part One: Compare trends in total graduate enrollment for males and females (including full-time/part-time and private/public universities) in the United States from 1967 - 2015.
+```{r, part 1}
+#performing linear regression to find trends in the data between M/F enrollment throughout time
+
+female_lm <- lm(grad$Total_Females ~ grad$Year)
+male_lm   <- lm(grad$Total_Males ~ grad$Year)
+
+
+summary(female_lm)
+summary(male_lm)
+  #The R^2 value tells us how much variance in our dependent variable is expained by our independent      variable
+  #We use Multiple R-squared value for single linear regressions, and adjusted for multiple.
+
+
+#Check for regression assumptions
+plot(female_lm)
+  #Uhm... what do we do when our model breaks assumptions of homoskedasticity?
+      #Residuals vs Fitted shows our residuals violate the assumption of homoskedasticity. What does that mean for our R2 value? 
+
+plot(male_lm)
+  #Our data still violates homoskedasticity, but now are they also not normally distributed?? (QQ Plot)
+
+
+
+#Use predict and basically the last lab to get lower and upper bounds, and then geom ribbon or whatever you want for CI around the lines
+grad_new <- data.frame(City = rep(c("San Luis Obispo",
+                                  "Santa Maria-Orcutt",
+                                  "Atascadero",
+                                  "Arroyo Grande"), 
+                                each = 60), 
+                     SqFt = rep(seq(from = 500,
+                                    to = 3500, 
+                                    length = 20), 
+                                times = 12), 
+                     Status = rep(c("Regular",
+                                    "Foreclosure",
+                                    "Short Sale"), 
+                                  times = 12, 
+                                  each = 20))
+```
+
