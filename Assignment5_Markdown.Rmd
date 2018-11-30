@@ -46,20 +46,16 @@ plot(male_lm)
 
 
 
-#Use predict and basically the last lab to get lower and upper bounds, and then geom ribbon or whatever you want for CI around the lines
-grad_new <- data.frame(City = rep(c("San Luis Obispo",
-                                  "Santa Maria-Orcutt",
-                                  "Atascadero",
-                                  "Arroyo Grande"), 
-                                each = 60), 
-                     SqFt = rep(seq(from = 500,
-                                    to = 3500, 
-                                    length = 20), 
-                                times = 12), 
-                     Status = rep(c("Regular",
-                                    "Foreclosure",
-                                    "Short Sale"), 
-                                  times = 12, 
-                                  each = 20))
+#######################################################################################################
+#Plot the data
+
+enroll_graph <- ggplot(grad, aes(x = Year, y = Total_Enrollment))+
+  #geom_point(aes(x = Year, y = Total_Males))+
+  geom_smooth(aes(x = Year, y = Total_Males), method = lm, alpha = 0.15, se = F)+
+  geom_smooth(aes(x = Year, y = Total_Females), method = lm, alpha = 0.15, se = F)
+
+enroll_graph
+
+
 ```
 
