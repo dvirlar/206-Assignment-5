@@ -51,11 +51,10 @@ plot(male_lm)
 
 enroll_graph <- ggplot(grad, aes(x = Year, y = Total_Males))+
   #geom_point(aes(x = Year, y = Total_Males))+
-  geom_smooth(method = lm, alpha = 0.15, se = F, aes(col = "Male Enrollment"))+
-  geom_smooth(aes(x = Year, y = Total_Females, col = "Female Enrollment"), method = lm, alpha = 0.15, se = F)+
-  geom_smooth(aes(x = Year, y = Public_Enrollment, col = "Public School Enrollment"), method = lm, se =F)+
-  geom_smooth(aes(x = Year, y = Private_Enrollment, col = "Private School Enrollment"), method = lm, se = F)+
-  ylab("Enrollment")
+  geom_smooth(method = lm, se = F, aes(col = "Male Enrollment"))+
+  geom_smooth(aes(x = Year, y = Total_Females, col = "Female Enrollment"), method = lm, se = F)+
+  ylab("Enrollment")+
+  ggtitle("Changes in University Enrollment History by Sex")
 
 enroll_graph
 
