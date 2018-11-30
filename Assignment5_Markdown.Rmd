@@ -30,7 +30,7 @@ female_lm <- lm(grad$Total_Females ~ grad$Year)
 male_lm   <- lm(grad$Total_Males ~ grad$Year)
 
 
-summary(female_lm)
+summary(female_lm) 
 summary(male_lm) 
   #The R^2 value tells us how much variance in our dependent variable is expained by our independent      variable
   #We use Multiple R-squared value for single linear regressions, and adjusted for multiple.
