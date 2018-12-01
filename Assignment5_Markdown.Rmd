@@ -20,6 +20,16 @@ grad <- grad %>%
 ```
 
 
+Part 2. Shifts in female PhD recipients by field (1985, 2000, and 2015).
+```{r}
+
+## Tidied PhD field data. I have removed most data in Excel, leaving only what we need to complete Part 2. 
+
+phd_field <- read_csv("PhD_field.csv")
+
+```
+
+
 
 
 Part One: Compare trends in total graduate enrollment for males and females (including full-time/part-time and private/public universities) in the United States from 1967 - 2015.
