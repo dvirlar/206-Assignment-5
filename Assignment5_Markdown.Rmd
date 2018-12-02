@@ -241,5 +241,9 @@ fac2_aic <- AIC(fac_lm2)
 fac1_aic; fac2_aic
 # 9209      9217 
 
+#Create stargazer table
+stargazer(fac1_aic, fac2_aic, type = 'html', out="AIC.htm")
+
+
 ```
 
