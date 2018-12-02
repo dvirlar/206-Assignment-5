@@ -194,10 +194,52 @@ chi_test <- chisq.test(chi_df)
 
 
 
+
+
+Part 3. Compare median salaries for male and female doctorate recipients in 2015. Answer these two questions: 
+
+(1) Does median salary differ significantly between male and female starting postdoc positions? 
+
+(2) Does median salary differ significantly between male and female PhD recipients in non-postdoc employment positions?
 ```{r}
-#Look at lecture 11. To compare medians, we use Mann-Whitney U
+#Look at lecture 11. To compare medians, we use Mann-Whitney U. HOWEVER. Because the data is paired, we use Wilcoxon Signed-Rank (Lab 7)
+#Male and female salaries for starting postdoctoral and other employment positions (2015)
+
+#load in the data
+phd_salary <- read_csv("PhD_Salary.csv")
+
+postdoc <- wilcox.test(phd_salary$Male_Postdoc, phd_salary$Female_Postdoc, paired = TRUE)
+non_postdoc <- wilcox.test(phd_salary$Male_Employment, phd_salary$Female_Employment, paired = TRUE)
+#H0: Ranks are equal
+#HA: Ranks are NOT equal
+  #Samples are not independent
+  #Data is paired because we are comparing 
+
+```
 
 
+
+Part 4. Exploring academic salaries for professors in U.S. colleges.
+```{r}
+#Develop a model describing faculty salary based on data for faculty sex, rank, years in current position, field, and number of years since doctoral degree was earned.
+
+faculty <- read_csv("faculty_salary.csv")
+
+fac_lm1 <- lm(salary ~ sex + years_service + discipline + postgrad_years, data = faculty)
+fac_lm2 <- lm(salary ~ sex + discipline + postgrad_years, data = faculty)
+
+
+summary(fac_lm1)
+summary(fac_lm2)
+
+
+#Compare models using AIC
+    #Recall: lower AIC value indicates a *more optimal* balance - **BUT STATISTICS IS NO SUBSTITUTE FOR JUDGEMENT!!!**
+fac1_aic <- AIC(fac_lm1)
+fac2_aic <- AIC(fac_lm2)
+
+fac1_aic; fac2_aic
+# 9209      9217 
 
 ```
 
