@@ -10,25 +10,20 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 
-```{r}
+```{r, packages}
 #load data and clean it up
 library(tidyverse) #for all things tidy
+library(stargazer) 
 grad <- read_csv("grad_enrollment.csv")
 
 grad <- grad %>% 
   select(Year, Total_Enrollment, Total_Males, Total_Females, Public_Enrollment, Private_Enrollment)
-```
 
-
-Part 2. Shifts in female PhD recipients by field (1985, 2000, and 2015).
-```{r}
 
 ## Tidied PhD field data. I have removed most data in Excel, leaving only what we need to complete Part 2. 
-
 phd_field <- read_csv("PhD_field.csv")
 
 ```
-
 
 
 
@@ -36,9 +31,17 @@ Part One: Compare trends in total graduate enrollment for males and females (inc
 ```{r, part 1}
 #performing linear regression to find trends in the data between M/F enrollment throughout time
 
-female_lm <- lm(grad$Total_Females ~ grad$Year)
-male_lm   <- lm(grad$Total_Males ~ grad$Year)
+female_lm <- lm(Total_Females ~ Year, data = grad)
+male_lm   <- lm(Total_Males ~ Year, data = grad)
 
+#Use stargazer to create regression table
+#stargazer(female_lm, male_lm, type = "html")
+
+stargazer(attitude, type = "text")
+stargazer(attitude, type = 'text')
+stargazer(female_lm, male_lm, type = 'text')
+stargazer(female_lm, male_lm, type = 'html', out="test.htm")
+    #Comparing trends in male and female graduate enrollment by means of a linear model, 1967-2015
 
 summary(female_lm) 
 summary(male_lm) 
@@ -55,18 +58,145 @@ plot(male_lm)
   #Our data still violates homoskedasticity, but now are they also not normally distributed?? (QQ Plot)
 
 
+#Use the cor.test() function to find Pearson’s r for the linear relationship described between year and graduate enrollment.
+    #cor.test(x,y)
+female_pr <- cor.test(grad$Year, grad$Total_Females)
+female_pr
+
+male_pr <- cor.test(grad$Year, grad$Total_Males)
+male_pr
+
+
+#Simplified -- Female
+#The model (female graduate enrollment = 30,126*(year) - 58955502; no. of students) explains a significant amount of variance in female graduate enrollment (F(1,47) = 2669, p < 0.01, R2 = 0.98, Pearson's r = 0.99)
+
+#Thorough -- Female
+#Total female graduate enrollment is significantly predicted by year (b = -58955502, t(47) = 2669) with a strong positive correlation (Pearson's R = 0.99). The overall model (female enrollment = 30,126*year - 58955502, count of students) explains a significant amount of variance in total female graduate enrollment (F(1,47) = 2669, p < 0.001, R2 = 0.98).
+
+
+
+#Simplified -- Male
+#The model (male graduate enrollment = 9,069*(year) - 17112153; no. of students) explains a significant amount of variance in total male graduate enrollment (F(1,47) = 276, p < 0.001, R2 = 0.85, Pearson's r = 0.92)
+
+
 
 #######################################################################################################
-#Plot the data
+#Explore the data
 
+expo_graph <- ggplot(grad, aes(x = Year, y = Total_Males))+
+  geom_point(aes(col = "Males"))+
+  geom_point(aes(x = Year, y = Total_Females, col = "Females"))
+
+#Plot the data  
 enroll_graph <- ggplot(grad, aes(x = Year, y = Total_Males))+
-  #geom_point(aes(x = Year, y = Total_Males))+
-  geom_smooth(method = lm, se = F, aes(col = "Male Enrollment"))+
-  geom_smooth(aes(x = Year, y = Total_Females, col = "Female Enrollment"), method = lm, se = F)+
-  ylab("Enrollment")+
-  ggtitle("Changes in University Enrollment History by Sex")
+  geom_smooth(method = lm, se = F, aes(col = "Male"))+
+  geom_smooth(aes(x = Year, y = Total_Females, col = "Female"), method = lm, se = F)+
+  ylab("Enrollment \n")+
+  xlab("\n Year")+
+  ggtitle("Changes in University Enrollment History by Sex, 1967-2015 \n")+
+  theme_classic()
 
-enroll_graph
+enroll_graph + theme(plot.title = element_text(hjust = 0.50),
+                  text = element_text(size = 12))+ 
+  scale_color_discrete(name = "Sex")
+
+```
+
+
+
+
+
+
+
+
+
+
+
+Part Two. Shifts in female PhD recipients by field (1985, 2000, and 2015).
+```{r, part 2}
+#Describe if and how there was a shift in PhDs awarded to females in four fields in 1985, 2000, and 2015
+
+#filter out male from the data set
+phd_filter <- phd_field %>% 
+  filter(sex == "female") %>%  #we're only keeping females in the data set. fuck the men. get rid of them
+  select(field, year, number, percent) %>% 
+  #I was having trouble changing the legend status', so I just changed the actual row names.
+   mutate(field = case_when(
+    field == "physical and earth sciences" ~ "Physical Sciences",
+    field == "Engineering" ~ "Engineering",
+    field == "Education" ~ "Education",
+    field == "Humanities and arts" ~ "Humanities"))
+
+
+#after trying to do exploratory graphs, i quit because they didn't show anything useful. That's my ted talk, thanks for coming. However, because of the Central Limit Theorem, we can assume things are normally distributed. 
+
+
+#Question being asked: What does the trend look like for female's receiving phds over the years, by field?
+    #graph should have data points for each field, and x axis should be years
+phd_graph <- ggplot(phd_filter, aes(x = year, y = number, group = field))+
+  geom_line(aes(col = field))+
+  geom_point(aes(col = field))+
+  ylab("Degrees Awarded \n")+ #Need to change this? 
+  xlab("\nYear")+
+  ggtitle("Total Doctorate Degrees Awarded by Field, 1985-2015 \n")+
+  theme_classic()+
+  scale_x_continuous(breaks = c(1985, 2000, 2015))
+  
+
+phd_graph + theme(plot.title = element_text(hjust = 0.50),
+                  text = element_text(size = 12)) + #to center the title, and change fon't size. This will be helpful in the actual document we turn in. 
+  scale_color_discrete(name = "Field of Study") #This the legend title
+
+
+
+
+
+
+
+
+######################################################################################################
+
+#Statistical analysis for part 2
+
+#Thought process: Using chi-square to test for independence between doctorates and fields of study
+#Lecture 12
+
+          #In General
+#H0: No association between variables studied. The null hypothesis is independence.
+#HA: There IS an association between variables.
+
+          #For Us
+#H0: There is no association between doctorates awarded and field of study
+#HA: There IS an associaiton between 
+
+
+
+#Create new data frame for use in Chi-Square
+Year85 <- c(3491, 198, 1392, 569)
+Year00 <- c(4179, 838, 2672, 1022)
+Year15 <- c(3502, 2301, 2832, 1988)
+
+chi_df <- rbind(Year85, Year00, Year15)
+colnames(chi_df) <- c("Education", "Engineering", "Humanities", "Physical Sciences")
+
+chi_test <- chisq.test(chi_df)
+  #X-squared = 2073.3, df = 6, p-value < 2.2e-16
+  #We reject the null hypothesis! Degrees awarded ARE associated with field of study!
+
+#"There is a significant association between time elapsed and degrees awarded by department (X2(6) = 2073.3, p < 0.001)"
+
+#Degrees awarded by field (education, engineering, humanities, physical sciences) differed significantly between 1985, 2000, and 2015 (X2(6) = 2073.3, p < 0.001).
+
+```
+
+
+
+
+
+
+```{r}
+#Look at lecture 11. To compare medians, we use Mann-Whitney U
+
 
 
 ```
