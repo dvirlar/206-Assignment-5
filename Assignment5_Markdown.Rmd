@@ -47,9 +47,6 @@ male_lm   <- lm(Total_Males ~ Year, data = grad)
 #Use stargazer to create regression table
 #stargazer(female_lm, male_lm, type = "html")
 
-stargazer(attitude, type = "text")
-stargazer(attitude, type = 'text')
-stargazer(female_lm, male_lm, type = 'text')
 stargazer(female_lm, male_lm, type = 'html', out="test.htm")
     #Comparing trends in male and female graduate enrollment by means of a linear model, 1967-2015
 
@@ -93,7 +90,7 @@ male_pr
 
 
 
-#######################################################################################################
+######################################################################################################
 #Explore the data
 
 expo_graph <- ggplot(grad, aes(x = Year, y = Total_Males))+
@@ -102,8 +99,10 @@ expo_graph <- ggplot(grad, aes(x = Year, y = Total_Males))+
 
 #Plot the data  
 enroll_graph <- ggplot(grad, aes(x = Year, y = Total_Males))+
+  geom_point(aes(col="Male"))+
   geom_smooth(method = lm, se = F, aes(col = "Male"))+
   geom_smooth(aes(x = Year, y = Total_Females, col = "Female"), method = lm, se = F)+
+  geom_point(aes(x = Year, y = Total_Females, col = "Female"))+
   ylab("Enrollment \n")+
   xlab("\n Year")+
   ggtitle("Changes in University Enrollment History by Sex, 1967-2015 \n")+
@@ -286,7 +285,7 @@ fac1_aic; fac2_aic
 
 
 #Create stargazer table 
-stargazer(fac1_aic, fac2_aic, type = 'html', out="AIC.htm")
+stargazer(fac_lm2, fac_lm2, type = 'html', out="AIC.htm")
 
 
 ```
