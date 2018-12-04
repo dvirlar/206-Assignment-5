@@ -273,7 +273,7 @@ fac1_aic; fac2_aic
 
 
 
-#Create stargazer table
+#Create stargazer table 
 stargazer(fac1_aic, fac2_aic, type = 'html', out="AIC.htm")
 
 
