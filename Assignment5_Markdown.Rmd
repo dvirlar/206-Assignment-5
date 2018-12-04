@@ -225,13 +225,13 @@ Part 4. Exploring academic salaries for professors in U.S. colleges.
 
 faculty <- read_csv("faculty_salary.csv")
 
-fac_lm1 <- lm(salary ~ sex + years_service + discipline + postgrad_years, data = faculty)
-fac_lm2 <- lm(salary ~ sex + discipline + postgrad_years, data = faculty)
+fac_lm1 <- lm(salary ~ sex + years_service + discipline + postgrad_years + rank, data = faculty)
+fac_lm2 <- lm(salary ~ sex + discipline + postgrad_years + rank, data = faculty)
 
 
 summary(fac_lm1)
 summary(fac_lm2)
-
+#Figure out which x variables are eing compounded with each other, and take them out of the model. 
 
 #Compare models using AIC
     #Recall: lower AIC value indicates a *more optimal* balance - **BUT STATISTICS IS NO SUBSTITUTE FOR JUDGEMENT!!!**
@@ -239,7 +239,10 @@ fac1_aic <- AIC(fac_lm1)
 fac2_aic <- AIC(fac_lm2)
 
 fac1_aic; fac2_aic
-# 9209      9217 
+# 9209     9217 
+    #Find a resource that has actually studied this, and cite it in the paper. Most likely, we will end up actually using the second linear model because despite having a slightly higher AIC, it doesn't include the counterintuitive negative coefficient associated with length of service
+
+
 
 #Create stargazer table
 stargazer(fac1_aic, fac2_aic, type = 'html', out="AIC.htm")
