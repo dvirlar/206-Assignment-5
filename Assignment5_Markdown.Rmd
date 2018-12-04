@@ -20,6 +20,7 @@ knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse) #for all things tidy
 library(stargazer) 
 library(extrafont) 
+library(car)
 #font_import() ## imports new fonts, need to give consent in console (y/n). May take a few minutes... but we now have all of the fonts to choose from!!!  
 
 
@@ -46,9 +47,6 @@ male_lm   <- lm(Total_Males ~ Year, data = grad)
 #Use stargazer to create regression table
 #stargazer(female_lm, male_lm, type = "html")
 
-stargazer(attitude, type = "text")
-stargazer(attitude, type = 'text')
-stargazer(female_lm, male_lm, type = 'text')
 stargazer(female_lm, male_lm, type = 'html', out="test.htm")
     #Comparing trends in male and female graduate enrollment by means of a linear model, 1967-2015
 
@@ -92,7 +90,7 @@ male_pr
 
 
 
-#######################################################################################################
+######################################################################################################
 #Explore the data
 
 expo_graph <- ggplot(grad, aes(x = Year, y = Total_Males))+
@@ -101,11 +99,13 @@ expo_graph <- ggplot(grad, aes(x = Year, y = Total_Males))+
 
 #Plot the data  
 enroll_graph <- ggplot(grad, aes(x = Year, y = Total_Males))+
+  geom_point(aes(col="Male"))+
   geom_smooth(method = lm, se = F, aes(col = "Male"))+
   geom_smooth(aes(x = Year, y = Total_Females, col = "Female"), method = lm, se = F)+
+  geom_point(aes(x = Year, y = Total_Females, col = "Female"))+
   ylab("Enrollment \n")+
   xlab("\n Year")+
-  ggtitle("Changes in University Enrollment History by Sex, 1967-2015 \n")+
+  #ggtitle("Changes in University Enrollment History by Sex, 1967-2015 \n")+
   theme_classic()
 
 enroll_graph + theme(plot.title = element_text(hjust = 0.50),
@@ -146,7 +146,7 @@ phd_graph <- ggplot(phd_filter, aes(x = year, y = number, group = field))+
   geom_point(aes(col = field))+
   ylab("Degrees Awarded \n")+ #Need to change this? 
   xlab("\nYear")+
-  ggtitle("Total Doctorate Degrees Awarded by Field, 1985-2015 \n")+
+  #ggtitle("Total Doctorate Degrees Awarded by Field, 1985-2015 \n")+
   theme_classic()+
   scale_x_continuous(breaks = c(1985, 2000, 2015))
   
@@ -267,13 +267,24 @@ Part 4. Exploring academic salaries for professors in U.S. colleges.
 
 faculty <- read_csv("faculty_salary.csv")
 
+faculty$rank <- fct_relevel(faculty$rank, "AsstProf")
+  #This takes that level as the reference level
+  levels(faculty$rank)
+
+
 fac_lm1 <- lm(salary ~ sex + years_service + discipline + postgrad_years + rank, data = faculty)
-fac_lm2 <- lm(salary ~ sex + discipline + postgrad_years + rank, data = faculty)
+fac_lm2 <- lm(salary ~ sex + discipline + rank, data = faculty)
 
 
 summary(fac_lm1)
 summary(fac_lm2)
+
 #Figure out which x variables are eing compounded with each other, and take them out of the model. 
+vif(fac_lm2)
+  #Can get rid of years_service and post grad years since they're collinear. Explain that they are better off explained in rank (Prof, Ass. Prof, Asst. Prof)
+
+
+
 
 #Compare models using AIC
     #Recall: lower AIC value indicates a *more optimal* balance - **BUT STATISTICS IS NO SUBSTITUTE FOR JUDGEMENT!!!**
@@ -281,13 +292,13 @@ fac1_aic <- AIC(fac_lm1)
 fac2_aic <- AIC(fac_lm2)
 
 fac1_aic; fac2_aic
-# 9209     9217 
+# 9093     9095 
     #Find a resource that has actually studied this, and cite it in the paper. Most likely, we will end up actually using the second linear model because despite having a slightly higher AIC, it doesn't include the counterintuitive negative coefficient associated with length of service
 
 
 
 #Create stargazer table 
-stargazer(fac1_aic, fac2_aic, type = 'html', out="AIC.htm")
+stargazer(fac_lm2, fac_lm2, type = 'html', out="AIC.htm")
 
 
 ```
