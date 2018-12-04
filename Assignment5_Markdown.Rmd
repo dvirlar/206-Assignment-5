@@ -105,7 +105,7 @@ enroll_graph <- ggplot(grad, aes(x = Year, y = Total_Males))+
   geom_point(aes(x = Year, y = Total_Females, col = "Female"))+
   ylab("Enrollment \n")+
   xlab("\n Year")+
-  ggtitle("Changes in University Enrollment History by Sex, 1967-2015 \n")+
+  #ggtitle("Changes in University Enrollment History by Sex, 1967-2015 \n")+
   theme_classic()
 
 enroll_graph + theme(plot.title = element_text(hjust = 0.50),
@@ -146,7 +146,7 @@ phd_graph <- ggplot(phd_filter, aes(x = year, y = number, group = field))+
   geom_point(aes(col = field))+
   ylab("Degrees Awarded \n")+ #Need to change this? 
   xlab("\nYear")+
-  ggtitle("Total Doctorate Degrees Awarded by Field, 1985-2015 \n")+
+  #ggtitle("Total Doctorate Degrees Awarded by Field, 1985-2015 \n")+
   theme_classic()+
   scale_x_continuous(breaks = c(1985, 2000, 2015))
   
