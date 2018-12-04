@@ -20,6 +20,7 @@ knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse) #for all things tidy
 library(stargazer) 
 library(extrafont) 
+library(car)
 #font_import() ## imports new fonts, need to give consent in console (y/n). May take a few minutes... but we now have all of the fonts to choose from!!!  
 
 
@@ -254,13 +255,24 @@ Part 4. Exploring academic salaries for professors in U.S. colleges.
 
 faculty <- read_csv("faculty_salary.csv")
 
+faculty$rank <- fct_relevel(faculty$rank, "AsstProf")
+  #This takes that level as the reference level
+  levels(faculty$rank)
+
+
 fac_lm1 <- lm(salary ~ sex + years_service + discipline + postgrad_years + rank, data = faculty)
-fac_lm2 <- lm(salary ~ sex + discipline + postgrad_years + rank, data = faculty)
+fac_lm2 <- lm(salary ~ sex + discipline + rank, data = faculty)
 
 
 summary(fac_lm1)
 summary(fac_lm2)
+
 #Figure out which x variables are eing compounded with each other, and take them out of the model. 
+vif(fac_lm2)
+  #Can get rid of years_service and post grad years since they're collinear. Explain that they are better off explained in rank (Prof, Ass. Prof, Asst. Prof)
+
+
+
 
 #Compare models using AIC
     #Recall: lower AIC value indicates a *more optimal* balance - **BUT STATISTICS IS NO SUBSTITUTE FOR JUDGEMENT!!!**
@@ -268,7 +280,7 @@ fac1_aic <- AIC(fac_lm1)
 fac2_aic <- AIC(fac_lm2)
 
 fac1_aic; fac2_aic
-# 9209     9217 
+# 9093     9095 
     #Find a resource that has actually studied this, and cite it in the paper. Most likely, we will end up actually using the second linear model because despite having a slightly higher AIC, it doesn't include the counterintuitive negative coefficient associated with length of service
 
 
