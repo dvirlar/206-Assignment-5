@@ -5,15 +5,24 @@ date: "11/27/2018"
 output: html_document
 ---
 
+
+
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+
+## Daphne you are an angel sent from heaven 
 ```
 
 
 ```{r, packages}
 #load data and clean it up
+## install.packages("extrafont")  ## allows us to use more fonts than just the default
 library(tidyverse) #for all things tidy
 library(stargazer) 
+library(extrafont) 
+#font_import() ## imports new fonts, need to give consent in console (y/n). May take a few minutes... but we now have all of the fonts to choose from!!!  
+
+
 grad <- read_csv("grad_enrollment.csv")
 
 grad <- grad %>% 
@@ -42,6 +51,8 @@ stargazer(attitude, type = 'text')
 stargazer(female_lm, male_lm, type = 'text')
 stargazer(female_lm, male_lm, type = 'html', out="test.htm")
     #Comparing trends in male and female graduate enrollment by means of a linear model, 1967-2015
+
+## is this table working for you?
 
 summary(female_lm) 
 summary(male_lm) 
@@ -73,10 +84,11 @@ male_pr
 #Thorough -- Female
 #Total female graduate enrollment is significantly predicted by year (b = -58955502, t(47) = 2669) with a strong positive correlation (Pearson's R = 0.99). The overall model (female enrollment = 30,126*year - 58955502, count of students) explains a significant amount of variance in total female graduate enrollment (F(1,47) = 2669, p < 0.001, R2 = 0.98).
 
-
-
 #Simplified -- Male
 #The model (male graduate enrollment = 9,069*(year) - 17112153; no. of students) explains a significant amount of variance in total male graduate enrollment (F(1,47) = 276, p < 0.001, R2 = 0.85, Pearson's r = 0.92)
+
+##Thorough -- Male
+##Total male graduate enrollment is significantly predicted by year (b = - 17112153, t(47) = Daphne where are you finding the female t-val? ) with a strong positive correlation (Pearson's R = 0.86). The model (male graduate enrollment = 9,069*(year) - 17112153; no. of students) explains a significant amount of variance in total male graduate enrollment (F(1,47) = 276, p < 0.001, R2 = 0.85, Pearson's r = 0.92)
 
 
 
@@ -97,17 +109,11 @@ enroll_graph <- ggplot(grad, aes(x = Year, y = Total_Males))+
   theme_classic()
 
 enroll_graph + theme(plot.title = element_text(hjust = 0.50),
-                  text = element_text(size = 12))+ 
+                  text = element_text(size = 12, 
+                                      family ="Times New Roman"))+  ## font shoes in knitted document
   scale_color_discrete(name = "Sex")
 
 ```
-
-
-
-
-
-
-
 
 
 
@@ -130,6 +136,8 @@ phd_filter <- phd_field %>%
 
 #after trying to do exploratory graphs, i quit because they didn't show anything useful. That's my ted talk, thanks for coming. However, because of the Central Limit Theorem, we can assume things are normally distributed. 
 
+## Totally fine!! 
+
 
 #Question being asked: What does the trend look like for female's receiving phds over the years, by field?
     #graph should have data points for each field, and x axis should be years
@@ -144,7 +152,8 @@ phd_graph <- ggplot(phd_filter, aes(x = year, y = number, group = field))+
   
 
 phd_graph + theme(plot.title = element_text(hjust = 0.50),
-                  text = element_text(size = 12)) + #to center the title, and change fon't size. This will be helpful in the actual document we turn in. 
+                  text = element_text(size = 12, 
+                                      family ="Times New Roman")) + #to center the title, and change fon't size. This will be helpful in the actual document we turn in. 
   scale_color_discrete(name = "Field of Study") #This the legend title
 
 
@@ -180,8 +189,12 @@ chi_df <- rbind(Year85, Year00, Year15)
 colnames(chi_df) <- c("Education", "Engineering", "Humanities", "Physical Sciences")
 
 chi_test <- chisq.test(chi_df)
+
+chi_test
   #X-squared = 2073.3, df = 6, p-value < 2.2e-16
   #We reject the null hypothesis! Degrees awarded ARE associated with field of study!
+
+## for some reason Natalie's chi^2 is not running, so I can't proof-read this. 
 
 #"There is a significant association between time elapsed and degrees awarded by department (X2(6) = 2073.3, p < 0.001)"
 
@@ -210,10 +223,26 @@ phd_salary <- read_csv("PhD_Salary.csv")
 
 postdoc <- wilcox.test(phd_salary$Male_Postdoc, phd_salary$Female_Postdoc, paired = TRUE)
 non_postdoc <- wilcox.test(phd_salary$Male_Employment, phd_salary$Female_Employment, paired = TRUE)
+
 #H0: Ranks are equal
 #HA: Ranks are NOT equal
   #Samples are not independent
   #Data is paired because we are comparing 
+
+
+postdoc
+
+##data:  phd_salary$Male_Postdoc and phd_salary$Female_Postdoc
+##V = 19.5, p-value = 0.8884
+
+##Retain the null
+
+non_postdoc
+
+##data:  phd_salary$Male_Employment and phd_salary$Female_Employment
+##V = 101, p-value = 0.002572
+
+##Accept the alternative
 
 ```
 
