@@ -156,8 +156,21 @@ phd_graph + theme(plot.title = element_text(hjust = 0.50),
                                       family ="Times New Roman")) + #to center the title, and change fon't size. This will be helpful in the actual document we turn in. 
   scale_color_discrete(name = "Field of Study") #This the legend title
 
+###############
+##Bar graph comparison
 
+compare_graph <- ggplot(phd_filter)+
+  geom_bar(aes(x = year, y = number, group = field, fill = field), data = phd_field, stat = "identity")+
+  labs(x = "Year", y="Number of Degrees Awarded")+
+   ggtitle("Total Doctorate Degrees Awarded by Field, 1985-2015 \n")+
+  scale_y_continuous(expand = c(0,0))+
+  scale_x_continuous(breaks = c(1985, 2000, 2015))+
+  theme_classic()
 
+compare_graph + theme(plot.title = element_text(hjust = 0.50),
+                  text = element_text(size = 12, 
+                                      family ="Times New Roman")) + #to center the title, and change fon't size. This will be helpful in the actual document we turn in. 
+  scale_color_discrete(name = "Field of Study") #This the legend title
 
 
 
